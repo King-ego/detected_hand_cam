@@ -1,0 +1,67 @@
+# python
+import cv2
+import os
+from datetime import datetime
+from detected import detect_hands_in_square
+
+
+def access_cam_live():
+    print("Iniciando câmera ao vivo...")
+    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+    if not cap.isOpened():
+        print("Erro: não foi possível abrir a câmera.")
+        return
+
+    win_name = 'Camera Live'
+    cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Erro: frame não disponível.")
+                break
+
+            cv2.imshow(win_name, frame)
+            print(frame)
+            key = cv2.waitKey(1) & 0xFF
+
+
+            # Protege a chamada que pode falhar em ambientes sem GUI
+            try:
+                visible = cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE)
+            except cv2.error:
+                print("GUI indisponível ou janela não criada, saindo...")
+                break
+
+            if visible < 1:
+                print("Janela fechada, saindo...")
+                break
+            if key == ord('h'):
+                print("Abrindo detector de mãos...")
+                # libera recursos antes de abrir o detector separado
+                cap.release()
+                cv2.destroyAllWindows()
+                # chama detector que usa sua própria captura/janela
+                detect_hands_in_square(camera_index=0)
+                # após retornar, reabre a câmera principal
+                cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+                if not cap.isOpened():
+                    print("Erro: não foi possível reabrir a câmera.")
+                    break
+                cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+                cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            if key == ord('q'):
+                print("Saindo...")
+                break
+            if key == ord('s'):
+                os.makedirs('temp', exist_ok=True)
+                ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+                filename = os.path.join('temp', f'captured_frame_{ts}.jpg')
+                cv2.imwrite(filename, frame)
+                print(f"Screenshot salvo em {filename}")
+    finally:
+        cap.release()
+        cv2.destroyAllWindows()
+        print("Câmera liberada.")
