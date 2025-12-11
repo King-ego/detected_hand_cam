@@ -4,6 +4,10 @@ import os
 from datetime import datetime
 import mediapipe as mp
 
+from actions import schedule_action, cancel_pending_action
+from gestures import GestureRecognizer
+
+
 def _bbox_from_landmarks(landmarks, w, h):
     x_coords = [min(max(int(lm.x * w), 0), w - 1) for lm in landmarks.landmark]
     y_coords = [min(max(int(lm.y * h), 0), h - 1) for lm in landmarks.landmark]
@@ -38,6 +42,8 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                             max_num_hands=max_num_hands,
                             min_detection_confidence=min_detection_confidence,
                             min_tracking_confidence=min_tracking_confidence) as hands:
+            recognizer = GestureRecognizer()
+            DELAY_SECONDS = 1.2
             while True:
                 ret, frame = cap.read()
                 if not ret or frame is None:
@@ -45,7 +51,6 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                     break
 
                 h, w = frame.shape[:2]
-                # garante square_ratio entre 0.0 e 1.0
                 ratio = max(0.0, min(1.0, square_ratio))
                 side = int(min(w, h) * ratio)
                 cx, cy = w // 2, h // 2
@@ -57,7 +62,7 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                 results = hands.process(frame_rgb)
 
                 annotated = frame.copy()
-                # desenha quadrado somente se ratio > 0
+
                 if ratio > 0:
                     cv2.rectangle(annotated, (sx1, sy1), (sx2, sy2), (0, 255, 255), 2)
 
@@ -79,6 +84,18 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                         cv2.rectangle(annotated, (bx1-5, by1-5), (bx2+5, by2+5), color, 2)
                         cv2.putText(annotated, label, (bx1, max(by1-10, 15)),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+
+                        # CHAMADA CORRIGIDA: detectar gestos usando a variável local definida aqui
+                        detections = recognizer.detect(hand_landmarks, w, h)
+
+                        for g in detections:
+                            # exemplo: só agendar ações se a mão estiver dentro do quadrado
+                            if ratio > 0 and not inside:
+                                continue
+                            if g == "cancel":
+                                cancel_pending_action()
+                                continue
+                            schedule_action(g, annotated, delay=DELAY_SECONDS)
 
                 cv2.imshow(window_name, annotated)
                 key = cv2.waitKey(1) & 0xFF
@@ -105,4 +122,4 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
 
 if __name__ == '__main__':
     # Exemplo: fullscreen e quadrado grande. Para imagem totalmente sem quadrado use square_ratio=0.0
-    detect_hands_in_square(fullscreen=True, square_ratio=0.9)
+    detect_hands_in_square(fullscreen=True, square_ratio=1)
