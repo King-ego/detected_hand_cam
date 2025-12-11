@@ -6,6 +6,8 @@ import mediapipe as mp
 from actions import schedule_action, cancel_pending_action
 from gestures import GestureRecognizer
 
+DELAY_SECONDS = 1.2
+
 
 def _bbox_from_landmarks(landmarks, w, h):
     x_coords = [min(max(int(lm.x * w), 0), w - 1) for lm in landmarks.landmark]
@@ -41,8 +43,8 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                             max_num_hands=max_num_hands,
                             min_detection_confidence=min_detection_confidence,
                             min_tracking_confidence=min_tracking_confidence) as hands:
-            recognizer = GestureRecognizer()
-            DELAY_SECONDS = 1.2
+            recognizer = GestureRecognizer(global_cooldown=4.0)
+
             while True:
                 ret, frame = cap.read()
                 if not ret or frame is None:
