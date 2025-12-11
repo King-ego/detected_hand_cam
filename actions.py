@@ -4,7 +4,7 @@ import shutil
 import threading
 from datetime import datetime
 
-LAST_ACTION = None  # (name, meta)
+LAST_ACTION = None
 _PENDING = {"timer": None, "name": None}
 
 def _set_last(name, meta):
@@ -21,13 +21,11 @@ def _run_action(name, annotated):
     except Exception as e:
         print(f"Erro executando ação '{name}': {e}")
     finally:
-        # limpar referência pendente se foi essa
         if _PENDING.get("name") == name:
             _PENDING["timer"] = None
             _PENDING["name"] = None
 
 def schedule_action(name, annotated, delay=0.6):
-    # cancela ação pendente anterior
     if _PENDING.get("timer"):
         try:
             _PENDING["timer"].cancel()
