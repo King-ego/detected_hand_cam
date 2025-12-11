@@ -14,7 +14,6 @@ def access_cam_live():
 
     win_name = 'Camera Live'
     cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     try:
         while True:
@@ -40,18 +39,14 @@ def access_cam_live():
                 break
             if key == ord('h'):
                 print("Abrindo detector de mãos...")
-                # libera recursos antes de abrir o detector separado
                 cap.release()
                 cv2.destroyAllWindows()
-                # chama detector que usa sua própria captura/janela
-                detect_hands_in_square(camera_index=0)
-                # após retornar, reabre a câmera principal
+                detect_hands_in_square(camera_index=0, window_name= win_name)
                 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
                 if not cap.isOpened():
                     print("Erro: não foi possível reabrir a câmera.")
                     break
                 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-                cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             if key == ord('q'):
                 print("Saindo...")
                 break
