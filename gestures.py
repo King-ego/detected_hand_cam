@@ -1,4 +1,3 @@
-# python
 import time
 import math
 from collections import deque
@@ -55,7 +54,6 @@ class GestureRecognizer:
         self.update(center)
         detections = []
 
-        # SWIPE
         swipe_px = min(w, h) * self.swipe_thresh_ratio
         if len(self.history) >= 2:
             dx = self.history[-1][0][0] - self.history[0][0][0]
@@ -66,13 +64,11 @@ class GestureRecognizer:
                 else:
                     detections.append('swipe_left'); self._trigger('swipe')
 
-        # PINCH (thumb + index)
         thumb = _lm_to_point(hand_landmarks.landmark[4], w, h)
         index_tip = _lm_to_point(hand_landmarks.landmark[8], w, h)
         if _distance(thumb, index_tip) < min(w, h) * self.pinch_thresh_ratio and self._is_cooled('pinch'):
             detections.append('pinch'); self._trigger('pinch')
 
-        # OPEN / FIST
         n_fingers = count_extended_fingers(hand_landmarks, w, h)
         if n_fingers >= 4 and self._is_cooled('open'):
             detections.append('open_hand'); self._trigger('open')
