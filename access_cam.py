@@ -19,15 +19,12 @@ def access_cam_live():
         while True:
             ret, frame = cap.read()
             if not ret:
-                print("Erro: frame não disponível.")
+                print("Frame não disponível, saindo...")
                 break
 
             cv2.imshow(win_name, frame)
-            print(frame)
             key = cv2.waitKey(1) & 0xFF
 
-
-            # Protege a chamada que pode falhar em ambientes sem GUI
             try:
                 visible = cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE)
             except cv2.error:
