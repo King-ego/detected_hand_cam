@@ -76,6 +76,7 @@ class GestureRecognizer:
 
         n_fingers = count_extended_fingers(hand_landmarks, w, h)
         if n_fingers >= 4 and self._is_cooled('open'):
+            print(f"hands: {hand_landmarks}, w: {w}, h: {h}, center: {center}")
             candidates.append('open_hand')
         if n_fingers <= 1 and self._is_cooled('fist'):
             candidates.append('fist')
