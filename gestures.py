@@ -38,11 +38,11 @@ class GestureRecognizer:
 
     def _recent_motion(self):
         if len(self.history) < 2:
-            return (0, 0)
+            return 0, 0
         (x0, y0), t0 = self.history[0]
         (x1, y1), t1 = self.history[-1]
         dt = max(1e-3, t1 - t0)
-        return ((x1 - x0) / dt, (y1 - y0) / dt)
+        return (x1 - x0) / dt, (y1 - y0) / dt
 
     def _is_cooled(self, name):
         last = self.cooldowns.get(name, 0)
@@ -80,11 +80,9 @@ class GestureRecognizer:
         if n_fingers <= 1 and self._is_cooled('fist'):
             candidates.append('fist')
 
-        # Se não estiver no cooldown global, aceita e dispara triggers
         if candidates and self._is_global_cooled():
             now = time.time()
             for name in candidates:
-                # define cooldown por-gesto apropriado (usa mesmo nome das verificações)
                 if name in ('swipe_left', 'swipe_right'):
                     self._trigger('swipe')
                 else:
