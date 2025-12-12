@@ -68,24 +68,40 @@ def action_pinch(annotated):
     _set_last("pinch", {"path": filename})
     print(f"Pinch: screenshot salvo em {filename}")
 
-def action_open(annotated):
+def action_open(annotated, skip_pinch=False):
     temp_dir = 'temp'
     if not os.path.exists(temp_dir):
-        print("Pasta temp não existe.")
+        print("not found temp folder to clean.")
         return
+    base = os.path.realpath(temp_dir)
     removed = 0
+    removed_paths = []
+
     for name in os.listdir(temp_dir):
+        if skip_pinch and name.startswith("pinch_"):
+            continue
         path = os.path.join(temp_dir, name)
+        real = os.path.realpath(path)
+
+        # Segurança: só operar em caminhos que estejam realmente dentro de `temp`
+        if not (real == base or real.startswith(base + os.sep)):
+            print(f"Pulando {path}: fora de `temp`")
+            continue
+
         try:
-            if os.path.isfile(path) or os.path.islink(path):
+            if os.path.islink(path) or os.path.isfile(path):
                 os.remove(path)
                 removed += 1
+                removed_paths.append(path)
             elif os.path.isdir(path):
                 shutil.rmtree(path)
                 removed += 1
+                removed_paths.append(path)
         except Exception as e:
             print(f"Erro removendo {path}: {e}")
-    print(f"Pasta temp limpa, {removed} item(s) removido(s).")
+
+    _set_last("open_hand", {"removed": removed_paths})
+    print(f"Pasta `temp` limpa, {removed} item(s) removido(s).")
     print("Ação: open hand")
 
 def action_fist(annotated):
