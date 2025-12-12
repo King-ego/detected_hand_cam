@@ -25,7 +25,7 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
 
     cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
-        print("Erro: não foi possível abrir a câmera.")
+        print("Error: not open camera.")
         return
 
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
@@ -48,7 +48,7 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
             while True:
                 ret, frame = cap.read()
                 if not ret or frame is None:
-                    print("Erro: frame não disponível.")
+                    print("Error: frame not found, exiting...")
                     break
 
                 h, w = frame.shape[:2]
@@ -81,16 +81,14 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                         inside = _is_bbox_inside(square, bbox) if ratio > 0 else False
 
                         color = (0, 200, 0) if inside else (0, 0, 255)
-                        label = "IN" if inside else "OUT" if ratio > 0 else "Mão"
+                        #label = "" if inside else "" if ratio > 0 else "Mão"
                         cv2.rectangle(annotated, (bx1-5, by1-5), (bx2+5, by2+5), color, 2)
-                        cv2.putText(annotated, label, (bx1, max(by1-10, 15)),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+                        #cv2.putText(annotated, label, (bx1, max(by1-10, 15)),
+                        #           cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
-                        # CHAMADA CORRIGIDA: detectar gestos usando a variável local definida aqui
                         detections = recognizer.detect(hand_landmarks, w, h)
 
                         for g in detections:
-                            # exemplo: só agendar ações se a mão estiver dentro do quadrado
                             if ratio > 0 and not inside:
                                 continue
                             if g == "cancel":
@@ -104,7 +102,7 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                 try:
                     visible = cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE)
                 except cv2.error:
-                    print("GUI indisponível ou janela não criada, saindo...")
+                    print("GUI not created, exiting...")
                     break
 
                 if visible < 1:
@@ -116,11 +114,10 @@ def detect_hands_in_square(camera_index=0, window_name='Hand Square', square_rat
                     ts = datetime.now().strftime('%Y%m%d_%H%M%S')
                     filename = os.path.join('temp', f'hand_{ts}.jpg')
                     cv2.imwrite(filename, annotated)
-                    print(f"Screenshot salvo em {filename}")
+                    print(f"Screenshot save in {filename}")
     finally:
         cap.release()
         cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    # Exemplo: fullscreen e quadrado grande. Para imagem totalmente sem quadrado use square_ratio=0.0
     detect_hands_in_square(fullscreen=True, square_ratio=1)
