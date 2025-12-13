@@ -1,20 +1,21 @@
 import time
 import math
 from collections import deque
+import bsl.validated as bsl_validated
 
-def _lm_to_point(lm, w, h):
+def lm_to_point(lm, w, h):
     return int(lm.x * w), int(lm.y * h)
 
-def _distance(a, b):
+def distance(a, b):
     return math.hypot(a[0] - b[0], a[1] - b[1])
 
 def hand_center(landmarks, w, h):
-    pts = [_lm_to_point(lm, w, h) for lm in landmarks.landmark]
+    pts = [lm_to_point(lm, w, h) for lm in landmarks.landmark]
     xs, ys = zip(*pts)
     return int(sum(xs) / len(xs)), int(sum(ys) / len(ys))
 
 def count_extended_fingers(landmarks, w, h):
-    pts = [_lm_to_point(lm, w, h) for lm in landmarks.landmark]
+    pts = [lm_to_point(lm, w, h) for lm in landmarks.landmark]
     wrist_y = pts[0][1]
     count = 0
     tips = [4, 8, 12, 16, 20]
@@ -54,11 +55,31 @@ class GestureRecognizer:
     def _is_global_cooled(self):
         return (time.time() - self.last_any_trigger) >= self.global_cooldown
 
+
     def detect(self, hand_landmarks, w, h):
         center = hand_center(hand_landmarks, w, h)
         self.update(center)
         candidates = []
 
+        """if is_bsl_a(hand_landmarks, w, h) and self._is_cooled('bsl_a'):
+            candidates.append('bsl_a')
+           """
+        for ch in 'abcçdefghijklmnopqrstuvwxyz':
+            func = getattr(bsl_validated, f'is_bsl_{ch}', None)
+            action = f'bsl_{ch}'
+            if callable(func) and func(hand_landmarks, w, h) and self._is_cooled(action):
+                candidates.append(action)
+
+        if candidates and self._is_global_cooled():
+            now = time.time()
+            # registra o primeiro gesto detectado como "último"
+            first = candidates[0]
+            self._trigger(first)
+            self.last_any_trigger = now
+            return candidates
+
+        return []
+"""
         swipe_px = min(w, h) * self.swipe_thresh_ratio
         if len(self.history) >= 2:
             dx = self.history[-1][0][0] - self.history[0][0][0]
@@ -69,7 +90,7 @@ class GestureRecognizer:
                 else:
                     candidates.append('swipe_left')
 
-        thumb = _lm_to_point(hand_landmarks.landmark[4], w, h)
+         thumb = _lm_to_point(hand_landmarks.landmark[4], w, h)
         index_tip = _lm_to_point(hand_landmarks.landmark[8], w, h)
         if _distance(thumb, index_tip) < min(w, h) * self.pinch_thresh_ratio and self._is_cooled('pinch'):
             candidates.append('pinch')
@@ -90,6 +111,7 @@ class GestureRecognizer:
                     self._trigger(name if name != 'open_hand' else 'open')
             self.last_any_trigger = now
             return candidates
+        """
 
-        return []
+
 
