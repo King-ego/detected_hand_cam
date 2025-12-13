@@ -2,8 +2,7 @@ import cv2
 import os
 from datetime import datetime
 import mediapipe as mp
-
-from actions import schedule_action, cancel_pending_action
+from bsl.alphabet import schedule_action, cancel_pending_action
 from gestures import GestureRecognizer
 
 DELAY_SECONDS = 1.2
