@@ -1,14 +1,18 @@
 import threading
+import logging
+from typing import Optional, Dict, Union
+from threading import Timer
+
+
+from bsl.actions.bsl_a import bsl_a
+
+logger = logging.getLogger(__name__)
 #Não esquecer bsl = Brazilian Sign Language
 LAST_ACTION = None
-_PENDING = {"timer": None, "name": None}
-
-def _bsl_a(annotated):
-    print(f"A, Ação: BSL A")
+_PENDING: Dict[str, Optional[Union[Timer, str]]] = {"timer": None, "name": None}
 
 def _run_action(name, annotated):
     cb = ACTIONS.get(name)
-    print(f"name: {name} and annotated: {annotated.shape}")
     if not cb:
         print(f"Ação desconhecida: {name}")
         return
@@ -25,7 +29,8 @@ def schedule_action(name, annotated, delay=0.6):
     if _PENDING.get("timer"):
         try:
             _PENDING["timer"].cancel()
-        except Exception:
+        except Exception as e:
+            logger.exception(f"Error: {e}")
             pass
         _PENDING["timer"] = None
         _PENDING["name"] = None
@@ -33,13 +38,13 @@ def schedule_action(name, annotated, delay=0.6):
     _PENDING["timer"] = t
     _PENDING["name"] = name
     t.start()
-    print(f"Ação agendada: {name} em {delay}s")
 
 def cancel_pending_action():
     if _PENDING.get("timer"):
         try:
             _PENDING["timer"].cancel()
-        except Exception:
+        except Exception as e:
+            logger.exception(f"Exception cancelling timer: {e}")
             pass
         print(f"Ação pendente '{_PENDING.get('name')}' cancelada")
         _PENDING["timer"] = None
@@ -48,5 +53,5 @@ def cancel_pending_action():
         print("Nenhuma ação pendente para cancelar")
 
 ACTIONS = {
-    'bsl_a': _bsl_a,
+    'bsl_a': bsl_a,
 }
