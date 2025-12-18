@@ -1,4 +1,7 @@
+import logging
 from bsl.validated import lm_to_point, distance
+
+logger = logging.getLogger(__name__)
 
 WRIST = 0
 THUMB_TIP = 4
@@ -22,5 +25,6 @@ def is_bsl_a(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12):
             return False
 
         return True
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         return False
