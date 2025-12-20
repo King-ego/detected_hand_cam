@@ -41,7 +41,7 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
         fingers = [
             (6, 8),   # index pip, tip
             (10, 12), # middle
-            (14, 16), # ring
+            (14, 16), 
             (18, 20),
         ]
 
