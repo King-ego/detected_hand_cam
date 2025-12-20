@@ -13,14 +13,14 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
         pinky_mcp = lm_to_point(landmarks.landmark[17], w, h)
         thumb_tip = lm_to_point(landmarks.landmark[4], w, h)
 
-        diag = math.hypot(w,h)
+        min_side = min(w, h)
 
         palm_center = (
-            (wrist[0] + index_mcp[0] + middle_mcp[0] + ring_mcp[0] + pinky_mcp[0]) / 4.0,
-            (wrist[1] + index_mcp[1] + middle_mcp[1] + ring_mcp[1] + pinky_mcp[1]) / 4.0
+            (wrist[0] + index_mcp[0] + middle_mcp[0] + ring_mcp[0] + pinky_mcp[0]) / 5.0,
+            (wrist[1] + index_mcp[1] + middle_mcp[1] + ring_mcp[1] + pinky_mcp[1]) / 5.0
         )
 
-        thumb_folded = distance(thumb_tip, palm_center) < thumb_index_thresh + diag
+        thumb_folded = distance(thumb_tip, palm_center) < thumb_index_thresh * min_side
 
         if not thumb_folded:
             return False
@@ -48,8 +48,10 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
         for pip_idx, tip_idx in fingers:
             pip = lm_to_point(landmarks.landmark[pip_idx], w, h)
             tip = lm_to_point(landmarks.landmark[tip_idx], w, h)
-            if proj_along_hand(tip) <= proj_along_hand(pip) + finger_fold_thresh * diag:
+            if proj_along_hand(tip) <= proj_along_hand(pip) + finger_fold_thresh * min_side:
                 return False
+
+        return True
 
     except Exception as e:
         logger.exception(e)
