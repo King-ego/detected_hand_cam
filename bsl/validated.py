@@ -24,6 +24,7 @@ try:
         for _attr in dir(_mod):
             if _attr.startswith("is_bsl_"):
                 _obj = getattr(_mod, _attr)
+                print(_obj)
                 if callable(_obj):
                     globals()[_attr] = _obj
                     __all__.append(_attr)
