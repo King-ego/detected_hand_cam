@@ -18,7 +18,6 @@ def _run_action(name, annotated):
         print(f"Ação desconhecida: {name}")
         return
     try:
-        print(f"Executando ação: {name}, {cb}")
         cb(annotated)
     except Exception as e:
         print(f"Erro executando ação '{name}': {e}")
