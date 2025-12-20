@@ -26,7 +26,37 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
             return False
 
         dx = middle_mcp[0] - wrist[0]
+        dy = middle_mcp[1] - wrist[1]
 
     except Exception as e:
         logger.exception(e)
         return False
+
+    """
+    
+    # direção da mão: wrist -> middle_mcp
+    dx = middle_mcp[0] - wrist[0]
+    dy = middle_mcp[1] - wrist[1]
+    norm = math.hypot(dx, dy)
+    if norm == 0:
+        logger.debug("hand direction zero")
+        return False
+    hand_dir = (dx / norm, dy / norm)
+
+    def proj_along_hand(pt):
+        return (pt[0] - wrist[0]) * hand_dir[0] + (pt[1] - wrist[1]) * hand_dir[1]
+
+    fingers = [
+        (6, 8),   # index pip, tip
+        (10, 12), # middle
+        (14, 16), # ring
+        (18, 20), # pinky
+    ]
+
+    for pip_idx, tip_idx in fingers:
+        pip = lm_to_point(landmarks[pip_idx], w, h)
+        tip = lm_to_point(landmarks[tip_idx], w, h)
+        if proj_along_hand(tip) <= proj_along_hand(pip) + finger_fold_thresh * diag:
+            return False
+    
+    """
