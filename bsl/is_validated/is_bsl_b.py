@@ -6,12 +6,12 @@ logger = logging.getLogger(__name__)
 
 def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 ):
     try:
-        wrist = lm_to_point(landmarks[0], w, h)
-        index_mcp = lm_to_point(landmarks[5], w, h)
-        middle_mcp = lm_to_point(landmarks[9], w, h)
-        ring_mcp = lm_to_point(landmarks[13], w, h)
-        pinky_mcp = lm_to_point(landmarks[17], w, h)
-        thumb_tip = lm_to_point(landmarks[4], w, h)
+        wrist = lm_to_point(landmarks.landmark[0], w, h)
+        index_mcp = lm_to_point(landmarks.landmark[5], w, h)
+        middle_mcp = lm_to_point(landmarks.landmark[9], w, h)
+        ring_mcp = lm_to_point(landmarks.landmark[13], w, h)
+        pinky_mcp = lm_to_point(landmarks.landmark[17], w, h)
+        thumb_tip = lm_to_point(landmarks.landmark[4], w, h)
 
         diag = math.hypot(w,h)
 
@@ -46,8 +46,8 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
         ]
 
         for pip_idx, tip_idx in fingers:
-            pip = lm_to_point(landmarks[pip_idx], w, h)
-            tip = lm_to_point(landmarks[tip_idx], w, h)
+            pip = lm_to_point(landmarks.landmark[pip_idx], w, h)
+            tip = lm_to_point(landmarks.landmark[tip_idx], w, h)
             if proj_along_hand(tip) <= proj_along_hand(pip) + finger_fold_thresh * diag:
                 return False
 
