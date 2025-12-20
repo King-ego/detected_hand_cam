@@ -5,6 +5,7 @@ from threading import Timer
 
 
 from bsl.actions.bsl_a import bsl_a
+from bsl.actions.bsl_b import bsl_b
 
 logger = logging.getLogger(__name__)
 #Não esquecer bsl = Brazilian Sign Language
@@ -17,6 +18,7 @@ def _run_action(name, annotated):
         print(f"Ação desconhecida: {name}")
         return
     try:
+        print(f"Executando ação: {name}, {cb}")
         cb(annotated)
     except Exception as e:
         print(f"Erro executando ação '{name}': {e}")
@@ -54,4 +56,5 @@ def cancel_pending_action():
 
 ACTIONS = {
     'bsl_a': bsl_a,
+    'bsl_b': bsl_b,
 }
