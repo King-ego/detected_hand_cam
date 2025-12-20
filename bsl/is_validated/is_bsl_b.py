@@ -39,8 +39,8 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
             return (pt[0] - wrist[0]) * hand_dir[0] + (pt[1] - wrist[1]) * hand_dir[1]
 
         fingers = [
-            (6, 8),   # index pip, tip
-            (10, 12), 
+            (6, 8),  
+            (10, 12),
             (14, 16),
             (18, 20),
         ]
