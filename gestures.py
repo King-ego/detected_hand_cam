@@ -25,7 +25,7 @@ def count_extended_fingers(landmarks, w, h):
     return count
 
 class GestureRecognizer:
-    def __init__(self, max_history=6, swipe_thresh_ratio=0.25, pinch_thresh_ratio=0.07, cooldown=0.8, global_cooldown=3.0):
+    def __init__(self, max_history=6, swipe_thresh_ratio=0.25, pinch_thresh_ratio=0.07, cooldown=0.8, global_cooldown=1.5):
         self.history = deque(maxlen=max_history)
         self.cooldowns = {}
         self.swipe_thresh_ratio = swipe_thresh_ratio
