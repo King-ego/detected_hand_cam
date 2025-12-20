@@ -28,6 +28,11 @@ def is_bsl_b(landmarks, w, h, thumb_index_thresh=0.12, finger_fold_thresh=0.12 )
         dx = middle_mcp[0] - wrist[0]
         dy = middle_mcp[1] - wrist[1]
 
+        norm = math.hypot(dx, dy)
+        if norm == 0:
+            logger.debug("hand direction zero")
+            return False
+
     except Exception as e:
         logger.exception(e)
         return False
