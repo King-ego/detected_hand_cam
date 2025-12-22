@@ -80,4 +80,3 @@ class GestureRecognizer:
             return candidates
 
         return []
-
