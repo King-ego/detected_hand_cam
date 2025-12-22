@@ -80,39 +80,4 @@ class GestureRecognizer:
             return candidates
 
         return []
-"""
-        swipe_px = min(w, h) * self.swipe_thresh_ratio
-        if len(self.history) >= 2:
-            dx = self.history[-1][0][0] - self.history[0][0][0]
-            dy = self.history[-1][0][1] - self.history[0][0][1]
-            if abs(dx) > swipe_px and abs(dx) > abs(dy) and self._is_cooled('swipe'):
-                if dx > 0:
-                    candidates.append('swipe_right')
-                else:
-                    candidates.append('swipe_left')
-
-         thumb = _lm_to_point(hand_landmarks.landmark[4], w, h)
-        index_tip = _lm_to_point(hand_landmarks.landmark[8], w, h)
-        if _distance(thumb, index_tip) < min(w, h) * self.pinch_thresh_ratio and self._is_cooled('pinch'):
-            candidates.append('pinch')
-
-        n_fingers = count_extended_fingers(hand_landmarks, w, h)
-        if n_fingers >= 4 and self._is_cooled('open'):
-            print(f"hands: {hand_landmarks}, w: {w}, h: {h}, center: {center}")
-            candidates.append('open_hand')
-        if n_fingers <= 1 and self._is_cooled('fist'):
-            candidates.append('fist')
-
-        if candidates and self._is_global_cooled():
-            now = time.time()
-            for name in candidates:
-                if name in ('swipe_left', 'swipe_right'):
-                    self._trigger('swipe')
-                else:
-                    self._trigger(name if name != 'open_hand' else 'open')
-            self.last_any_trigger = now
-            return candidates
-        """
-
-
 
