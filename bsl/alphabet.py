@@ -60,5 +60,6 @@ ACTIONS = {
     'bsl_a': bsl_a,
     'bsl_b': bsl_b,
     'bsl_c': bsl_c,
-    'bsl_d': bsl_d
+    'bsl_d': bsl_d,
+    'bsl_e': bsl_e
 }
