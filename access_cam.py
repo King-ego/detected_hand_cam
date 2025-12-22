@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from detected import detect_hands_in_square
 
-
 def access_cam_live():
     print("Start cam live...")
     capture = cv2.VideoCapture(0, cv2.CAP_V4L2)
