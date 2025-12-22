@@ -7,6 +7,7 @@ from threading import Timer
 from bsl.actions.bsl_a import bsl_a
 from bsl.actions.bsl_b import bsl_b
 from bsl.actions.bsl_c import bsl_c
+from bsl.actions.bsl_d import bsl_d
 
 logger = logging.getLogger(__name__)
 #Não esquecer bsl = Brazilian Sign Language
