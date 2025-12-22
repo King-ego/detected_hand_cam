@@ -6,6 +6,7 @@ from threading import Timer
 
 from bsl.actions.bsl_a import bsl_a
 from bsl.actions.bsl_b import bsl_b
+from bsl.actions.bsl_c import bsl_c
 
 logger = logging.getLogger(__name__)
 #Não esquecer bsl = Brazilian Sign Language
@@ -56,4 +57,5 @@ def cancel_pending_action():
 ACTIONS = {
     'bsl_a': bsl_a,
     'bsl_b': bsl_b,
+    'bsl_c': bsl_c
 }
