@@ -32,6 +32,15 @@ def is_bsl_c(landmarks, w, h, open_dist_thresh=0.10, circ_var_thresh=0.08, min_s
 
         dists.append(distance(thumb_tip, palm_center))
 
+        min_open = open_dist_thresh * min_side
+        if any(d <= min_open for d in dists):
+            return False
+
+        if max(dists) - min(dists) > circ_var_thresh * min_side:
+            return False
+
+        return True
+
         print(wrist, index_mcp, middle_mcp, ring_mcp, pinky_mcp, thumb_tip, min_side)
     except Exception as e:
         logger.exception(e)
