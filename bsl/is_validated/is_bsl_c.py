@@ -1,4 +1,5 @@
 import logging
+import math
 
 from bsl.validated import lm_to_point, distance
 
@@ -6,8 +7,6 @@ logger = logging.getLogger(__name__)
 
 def is_bsl_c(landmarks, w, h, open_dist_thresh=0.10, circ_var_thresh=0.08, min_span_deg=90, max_span_deg=260):
     try:
-        logger.info("Validating BSL C".upper())
-
         wrist = lm_to_point(landmarks.landmark[0], w, h)
         index_mcp = lm_to_point(landmarks.landmark[5], w, h)
         middle_mcp = lm_to_point(landmarks.landmark[9], w, h)
@@ -39,9 +38,34 @@ def is_bsl_c(landmarks, w, h, open_dist_thresh=0.10, circ_var_thresh=0.08, min_s
         if max(dists) - min(dists) > circ_var_thresh * min_side:
             return False
 
-        return True
+        angles = []
+        for ti in tip_indices + [4]:
+            pt = lm_to_point(landmarks.landmark[ti], w, h)
+            ang = math.degrees(math.atan2(pt[1] - palm_center[1], pt[0] - palm_center[0]))
 
-        print(wrist, index_mcp, middle_mcp, ring_mcp, pinky_mcp, thumb_tip, min_side)
+            if ang < 0:
+                ang += 360
+            angles.append(ang)
+
+        angles.sort()
+
+        max_gap = 0.0
+        for i in range(len(angles)):
+            a1 = angles[i]
+            a2 = angles[(i + 1) % len(angles)]
+            gap = (a2 - a1) if i + 1 < len(angles) else (angles[0] + 360 - angles[-1])
+
+            if gap < 0:
+                gap += 360
+
+            if gap > max_gap:
+                max_gap = gap
+        angular_span = 360.0 - max_gap
+
+        if not (min_span_deg <= angular_span <= max_span_deg):
+            return False
+
+        return True
     except Exception as e:
         logger.exception(e)
         return False
