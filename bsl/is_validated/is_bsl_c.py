@@ -39,6 +39,7 @@ def is_bsl_c(landmarks, w, h,
         # 1) verificar abertura mínima (não muito fechado)
         min_open = open_dist_thresh * min_side
         if any(d <= min_open for d in dists):
+            print("Falhou aqui 1")
             logger.debug("Algum dedo muito próximo da palma (muito fechado)")
             return False
 
@@ -47,6 +48,7 @@ def is_bsl_c(landmarks, w, h,
             pip = lm_to_point(landmarks.landmark[pip_idx], w, h)
             tip = lm_to_point(landmarks.landmark[tip_idx], w, h)
             if distance(pip, tip) < finger_fold_thresh * min_side:
+                print("Falhou aqui 2")
                 logger.debug("Dedo possivelmente dobrado (PIP->TIP curto)")
                 return False
 
@@ -54,9 +56,11 @@ def is_bsl_c(landmarks, w, h,
         sorted_d = sorted(dists)
         median = sorted_d[len(sorted_d) // 2]
         if median == 0:
+            print("Falhou aqui 3")
             logger.debug("median radius zero")
             return False
         if (max(dists) - min(dists)) > circ_var_thresh * median:
+            print("Falhou aqui 4")
             logger.debug("Variação radial entre pontas muito grande (relativa à mediana)")
             return False
 
@@ -76,6 +80,7 @@ def is_bsl_c(landmarks, w, h,
         angular_span = 360.0 - max_gap
 
         if not (min_span_deg <= angular_span <= max_span_deg):
+            print("Falhou aqui 5")
             logger.debug("Cobertura angular inválida: %s", angular_span)
             return False
 
