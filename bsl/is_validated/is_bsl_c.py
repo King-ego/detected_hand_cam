@@ -60,7 +60,6 @@ def is_bsl_c(landmarks, w, h,
             logger.debug("Variação radial entre pontas muito grande (relativa à mediana)")
             return False
 
-        # 4) cobertura angular (calcular span circular que engloba os pontos)
         angles = []
         for ti in tip_indices + [4]:  # incluir polegar
             pt = lm_to_point(landmarks.landmark[ti], w, h)
