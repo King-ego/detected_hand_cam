@@ -5,7 +5,12 @@ from bsl.validated import lm_to_point, distance
 
 logger = logging.getLogger(__name__)
 
-def is_bsl_c(landmarks, w, h, open_dist_thresh=0.10, circ_var_thresh=0.08, min_span_deg=90, max_span_deg=260):
+def is_bsl_c(landmarks, w, h,
+             open_dist_thresh=0.10,
+             circ_var_thresh=0.20,
+             finger_fold_thresh=0.07,
+             min_span_deg=90,
+             max_span_deg=260):
     try:
         wrist = lm_to_point(landmarks.landmark[0], w, h)
         index_mcp = lm_to_point(landmarks.landmark[5], w, h)
@@ -21,51 +26,61 @@ def is_bsl_c(landmarks, w, h, open_dist_thresh=0.10, circ_var_thresh=0.08, min_s
             (wrist[1] + index_mcp[1] + middle_mcp[1] + ring_mcp[1] + pinky_mcp[1]) / 5.0
         )
 
-        tip_indices = [8, 12, 16, 20]
+        tip_indices = [8, 12, 16, 20]  # pontas dos 4 dedos
+        pip_indices = [6, 10, 14, 18]  # PIP correspondentes (verificação de dobra)
 
+        # distâncias radiais dos tips e polegar ao centro da palma
         dists = []
-
         for ti in tip_indices:
-            tip = lm_to_point(landmarks.landmark[ti], w, h)
-            dists.append(distance(tip, palm_center))
-
+            pt = lm_to_point(landmarks.landmark[ti], w, h)
+            dists.append(distance(pt, palm_center))
         dists.append(distance(thumb_tip, palm_center))
 
+        # 1) verificar abertura mínima (não muito fechado)
         min_open = open_dist_thresh * min_side
         if any(d <= min_open for d in dists):
+            logger.debug("Algum dedo muito próximo da palma (muito fechado)")
             return False
 
-        if max(dists) - min(dists) > circ_var_thresh * min_side:
+        # 2) verificar se há muitos folds (PIP -> TIP deve ser razoável)
+        for pip_idx, tip_idx in zip(pip_indices, tip_indices):
+            pip = lm_to_point(landmarks.landmark[pip_idx], w, h)
+            tip = lm_to_point(landmarks.landmark[tip_idx], w, h)
+            if distance(pip, tip) < finger_fold_thresh * min_side:
+                logger.debug("Dedo possivelmente dobrado (PIP->TIP curto)")
+                return False
+
+        # 3) variação radial: usar mediana para ser independente do tamanho da mão
+        sorted_d = sorted(dists)
+        median = sorted_d[len(sorted_d) // 2]
+        if median == 0:
+            logger.debug("median radius zero")
+            return False
+        if (max(dists) - min(dists)) > circ_var_thresh * median:
+            logger.debug("Variação radial entre pontas muito grande (relativa à mediana)")
             return False
 
+        # 4) cobertura angular (calcular span circular que engloba os pontos)
         angles = []
-        for ti in tip_indices + [4]:
+        for ti in tip_indices + [4]:  # incluir polegar
             pt = lm_to_point(landmarks.landmark[ti], w, h)
             ang = math.degrees(math.atan2(pt[1] - palm_center[1], pt[0] - palm_center[0]))
-
             if ang < 0:
-                ang += 360
+                ang += 360.0
             angles.append(ang)
 
         angles.sort()
-
-        max_gap = 0.0
-        for i in range(len(angles)):
-            a1 = angles[i]
-            a2 = angles[(i + 1) % len(angles)]
-            gap = (a2 - a1) if i + 1 < len(angles) else (angles[0] + 360 - angles[-1])
-
-            if gap < 0:
-                gap += 360
-
-            if gap > max_gap:
-                max_gap = gap
+        n = len(angles)
+        gaps = [((angles[(i + 1) % n] - angles[i]) + 360.0) % 360.0 for i in range(n)]
+        max_gap = max(gaps)
         angular_span = 360.0 - max_gap
 
         if not (min_span_deg <= angular_span <= max_span_deg):
+            logger.debug("Cobertura angular inválida: %s", angular_span)
             return False
 
         return True
+
     except Exception as e:
         logger.exception(e)
         return False
