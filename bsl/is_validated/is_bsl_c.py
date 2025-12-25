@@ -50,7 +50,6 @@ def is_bsl_c(landmarks, w, h,
                 logger.debug("Dedo possivelmente dobrado (PIP->TIP curto)")
                 return False
 
-        # 3) variação radial: usar mediana para ser independente do tamanho da mão
         sorted_d = sorted(dists)
         median = sorted_d[len(sorted_d) // 2]
         if median == 0:
