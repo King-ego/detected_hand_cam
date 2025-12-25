@@ -26,8 +26,8 @@ def is_bsl_c(landmarks, w, h,
             (wrist[1] + index_mcp[1] + middle_mcp[1] + ring_mcp[1] + pinky_mcp[1]) / 5.0
         )
 
-        tip_indices = [8, 12, 16, 20]  # pontas dos 4 dedos
-        pip_indices = [6, 10, 14, 18] 
+        tip_indices = [8, 12, 16, 20] 
+        pip_indices = [6, 10, 14, 18]
 
         dists = []
         for ti in tip_indices:
