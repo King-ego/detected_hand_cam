@@ -42,7 +42,6 @@ def is_bsl_c(landmarks, w, h,
             logger.debug("Algum dedo muito próximo da palma (muito fechado)")
             return False
 
-        # 2) verificar se há muitos folds (PIP -> TIP deve ser razoável)
         for pip_idx, tip_idx in zip(pip_indices, tip_indices):
             pip = lm_to_point(landmarks.landmark[pip_idx], w, h)
             tip = lm_to_point(landmarks.landmark[tip_idx], w, h)
