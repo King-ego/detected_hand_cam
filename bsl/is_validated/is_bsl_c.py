@@ -64,7 +64,6 @@ def is_bsl_c(landmarks, w, h,
                 ang += 360.0
             angles.append(ang)
 
-        angles.sort()
 
 
 
