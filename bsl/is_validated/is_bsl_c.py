@@ -66,8 +66,7 @@ def is_bsl_c(landmarks, w, h,
 
         angles.sort()
         n = len(angles)
-        gaps = [((angles[(i + 1) % n] - angles[i]) + 360.0) % 360.0 for i in range(n)]
-      
+
 
 
 
