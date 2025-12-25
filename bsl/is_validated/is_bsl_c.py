@@ -60,9 +60,7 @@ def is_bsl_c(landmarks, w, h,
         for ti in tip_indices + [4]:  # incluir polegar
             pt = lm_to_point(landmarks.landmark[ti], w, h)
             ang = math.degrees(math.atan2(pt[1] - palm_center[1], pt[0] - palm_center[0]))
-            if ang < 0:
-                ang += 360.0
-            angles.append(ang)
+
 
 
 
