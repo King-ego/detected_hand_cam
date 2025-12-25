@@ -27,7 +27,7 @@ def is_bsl_c(landmarks, w, h,
         )
 
         tip_indices = [8, 12, 16, 20]  # pontas dos 4 dedos
-        pip_indices = [6, 10, 14, 18]  # PIP correspondentes (verificação de dobra)
+        pip_indices = [6, 10, 14, 18] 
 
         dists = []
         for ti in tip_indices:
