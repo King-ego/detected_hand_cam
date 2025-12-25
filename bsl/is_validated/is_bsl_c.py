@@ -36,7 +36,6 @@ def is_bsl_c(landmarks, w, h,
             dists.append(distance(pt, palm_center))
         dists.append(distance(thumb_tip, palm_center))
 
-        # 1) verificar abertura mínima (não muito fechado)
         min_open = open_dist_thresh * min_side
         if any(d <= min_open for d in dists):
             logger.debug("Algum dedo muito próximo da palma (muito fechado)")
