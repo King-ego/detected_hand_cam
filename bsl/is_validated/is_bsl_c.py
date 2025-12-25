@@ -65,7 +65,6 @@ def is_bsl_c(landmarks, w, h,
             angles.append(ang)
 
         angles.sort()
-        n = len(angles)
 
 
 
