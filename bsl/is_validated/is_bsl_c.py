@@ -26,7 +26,7 @@ def is_bsl_c(landmarks, w, h,
             (wrist[1] + index_mcp[1] + middle_mcp[1] + ring_mcp[1] + pinky_mcp[1]) / 5.0
         )
 
-        tip_indices = [8, 12, 16, 20] 
+        tip_indices = [8, 12, 16, 20]
         pip_indices = [6, 10, 14, 18]
 
         dists = []
@@ -67,8 +67,7 @@ def is_bsl_c(landmarks, w, h,
         angles.sort()
         n = len(angles)
         gaps = [((angles[(i + 1) % n] - angles[i]) + 360.0) % 360.0 for i in range(n)]
-        max_gap = max(gaps)
-        angular_span = 360.0 - max_gap
+      
 
 
 
