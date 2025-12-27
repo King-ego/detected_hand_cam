@@ -56,7 +56,7 @@ def cancel_pending_action():
         _PENDING["timer"] = None
         _PENDING["name"] = None
     else:
-        print("Nenhuma ação pendente para cancelar")
+        print("Not pending action to cancel")
 
 ACTIONS = {
     'bsl_a': bsl_a,
