@@ -25,7 +25,7 @@ def _run_action(name, annotated):
     try:
         cb(annotated)
     except Exception as e:
-        print(f"Erro executando ação '{name}': {e}")
+        print(f"Error executing action '{name}': {e}")
     finally:
         if _PENDING.get("name") == name:
             _PENDING["timer"] = None
