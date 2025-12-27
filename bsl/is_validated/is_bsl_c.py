@@ -37,7 +37,7 @@ def is_bsl_c(landmarks, w, h,
 
         min_open = open_dist_thresh * min_side
         if any(d <= min_open for d in dists):
-            logger.debug("Algum dedo muito próximo da palma (muito fechado)")
+            logger.debug("not open enough")
             return False
 
         for pip_idx, tip_idx in zip(pip_indices, tip_indices):
