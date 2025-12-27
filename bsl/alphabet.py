@@ -20,7 +20,7 @@ _PENDING: Dict[str, Optional[Union[Timer, str]]] = {"timer": None, "name": None}
 def _run_action(name, annotated):
     cb = ACTIONS.get(name)
     if not cb:
-        print(f"Ação desconhecida: {name}")
+        print(f"Action '{name}' not found")
         return
     try:
         cb(annotated)
