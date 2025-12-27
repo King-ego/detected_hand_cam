@@ -53,7 +53,7 @@ def is_bsl_c(landmarks, w, h,
             logger.debug("median radius zero")
             return False
         if (max(dists) - min(dists)) > circ_var_thresh * median:
-            logger.debug("Variação radial entre pontas muito grande (relativa à mediana)")
+            logger.debug("variance too high")
             return False
 
         return True
