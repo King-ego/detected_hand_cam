@@ -44,7 +44,7 @@ def is_bsl_c(landmarks, w, h,
             pip = lm_to_point(landmarks.landmark[pip_idx], w, h)
             tip = lm_to_point(landmarks.landmark[tip_idx], w, h)
             if distance(pip, tip) < finger_fold_thresh * min_side:
-                logger.debug("Dedo possivelmente dobrado (PIP->TIP curto)")
+                logger.debug("double fold detected")
                 return False
 
         sorted_d = sorted(dists)
