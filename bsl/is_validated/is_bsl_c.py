@@ -1,5 +1,4 @@
 import logging
-import math
 
 from bsl.validated import lm_to_point, distance
 
