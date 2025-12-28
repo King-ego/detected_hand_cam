@@ -11,6 +11,7 @@ from bsl.actions.bsl_d import bsl_d
 from bsl.actions.bsl_e import bsl_e
 from bsl.actions.bsl_f import bsl_f
 from bsl.actions.bsl_g import bsl_g
+from bsl.actions.bsl_h import bsl_h
 
 logger = logging.getLogger(__name__)
 #Não esquecer bsl = Brazilian Sign Language
